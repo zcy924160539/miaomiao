@@ -1,31 +1,31 @@
 <template>
-  <div class="search_body">
-    <div class="search_input">
-      <div class="search_input_wrapper">
-        <i class="iconfont icon-sousuo"></i>
-        <input type="text" v-model="message">
+    <div class="search_body">
+      <div class="search_input">
+        <div class="search_input_wrapper">
+          <i class="iconfont icon-sousuo"></i>
+          <input type="text" v-model="message">
+        </div>
+      </div>
+      <div class="search_result">
+        <h3>电影/电视剧/综艺</h3>
+        <ul>
+          <li v-for="movie in movieList" :key="movie.id">
+            <div class="img">
+              <img :src="movie.img | setWH('128.180')">
+            </div>
+            <div class="info">
+              <p>
+                <span>{{movie.nm}}</span>
+                <span>{{movie.sc}}</span>
+              </p>
+              <p>{{movie.enm}}</p>
+              <p>{{movie.cat}}</p>
+              <p>{{movie.rt}}</p>
+            </div>
+          </li>
+        </ul>
       </div>
     </div>
-    <div class="search_result">
-      <h3>电影/电视剧/综艺</h3>
-      <ul>
-        <li v-for="movie in movieList" :key="movie.id">
-          <div class="img">
-            <img :src="movie.img | setWH('128.180')">
-          </div>
-          <div class="info">
-            <p>
-              <span>{{movie.nm}}</span>
-              <span>{{movie.sc}}</span>
-            </p>
-            <p>{{movie.enm}}</p>
-            <p>{{movie.cat}}</p>
-            <p>{{movie.rt}}</p>
-          </div>
-        </li>
-      </ul>
-    </div>
-  </div>
 </template>
 
 <script>
@@ -34,7 +34,7 @@ export default {
   data() {
     return {
       message: "",
-      movieList: []
+      movieList: [],
     };
   },
   methods: {
@@ -46,9 +46,10 @@ export default {
   },
   watch: {
     message(newVal) {
+      var cityId = this.$store.state.city.id
       this.cancleRequest();
       this.axios
-        .get("/api/searchList?cityId=10&kw=" + newVal, {
+        .get(`/api/searchList?cityId=${cityId}&kw= + ${newVal}`, {
           cancelToken: new this.axios.CancelToken(c => {
             this.source = c;
           })

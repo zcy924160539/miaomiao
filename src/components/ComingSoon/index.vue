@@ -1,39 +1,51 @@
 <template>
   <div class="movie_body">
-    <ul>
-      <li v-for="coming in comingList" :key="coming.id">
-        <div class="pic_show">
-          <img :src="coming.img | setWH('128.180')">
-        </div>
-        <div class="info_list">
-          <h2>{{coming.nm}} <img v-if="coming.version" src="@/assets/maxs.png"></h2>
-          <p>
-            <span class="person">{{coming.wish}}</span> 人想看
-          </p>
-          <p>主演: {{coming.star}}</p>
-          <p>{{coming.rt}}上映</p>
-        </div>
-        <div class="btn_pre">预售</div>
-      </li>
-    </ul>
+    <Loading v-if="isLoading"/>
+    <Scroller v-else>
+      <ul>
+        <li v-for="coming in comingList" :key="coming.id">
+          <div class="pic_show">
+            <img :src="coming.img | setWH('128.180')">
+          </div>
+          <div class="info_list">
+            <h2>
+              {{coming.nm}}
+              <img v-if="coming.version" src="@/assets/maxs.png">
+            </h2>
+            <p>
+              <span class="person">{{coming.wish}}</span> 人想看
+            </p>
+            <p>主演: {{coming.star}}</p>
+            <p>{{coming.rt}}上映</p>
+          </div>
+          <div class="btn_pre">预售</div>
+        </li>
+      </ul>
+    </Scroller>
   </div>
 </template>
 
 <script>
 export default {
-  data(){
+  data() {
     return {
-      comingList:[]
-    }
+      comingList: [],
+      isLoading: true,
+      prevCityId: -1
+    };
   },
   name: "ComingSoon",
-  mounted(){
-    this.axios.get('/api/movieComingList?cityId=10').then((result)=>{
-      if(result.data.msg === 'ok'){
-        this.comingList = result.data.data.comingList
-        console.log(this.comingList)
+  activated() {
+    var cityId = this.$store.state.city.id
+    if(this.prevCityId === cityId) return
+    this.isLoading = true; 
+    this.axios.get(`/api/movieComingList?cityId=${cityId}`).then(result => {
+      if (result.data.msg === "ok") {
+        this.comingList = result.data.data.comingList;
+        this.isLoading = false;
+        this.prevCityId = cityId;
       }
-    })
+    });
   }
 };
 </script>

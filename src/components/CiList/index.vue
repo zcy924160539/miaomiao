@@ -1,22 +1,30 @@
 <template>
   <div class="cinema_body">
-    <ul>
-      <li v-for="cinema in cinemaList" :key="cinema.id">
-        <div>
-          <span>{{cinema.nm}}</span>
-          <span class="q">
-            <span class="price">{{cinema.sellPrice}}</span> 元起
-          </span>
-        </div>
-        <div class="address">
-          <span>{{cinema.addr}}</span>
-          <span>{{cinema.distance}}</span>
-        </div>
-        <div class="card">
-          <div v-for="(num,key) in cinema.tag" v-if="num === 1" :key="key" :class="key | classCard">{{key | formatCard}}</div>
-        </div>
-      </li>
-    </ul>
+    <Loading v-if="isLoading"/>
+    <Scroller v-else>
+      <ul>
+        <li v-for="cinema in cinemaList" :key="cinema.id">
+          <div>
+            <span>{{cinema.nm}}</span>
+            <span class="q">
+              <span class="price">{{cinema.sellPrice}}</span> 元起
+            </span>
+          </div>
+          <div class="address">
+            <span>{{cinema.addr}}</span>
+            <span>{{cinema.distance}}</span>
+          </div>
+          <div class="card">
+            <div
+              v-for="(num,key) in cinema.tag"
+              v-if="num === 1"
+              :key="key"
+              :class="key | classCard"
+            >{{key | formatCard}}</div>
+          </div>
+        </li>
+      </ul>
+    </Scroller>
   </div>
 </template>
 
@@ -25,13 +33,20 @@ export default {
   name: "CiList",
   data() {
     return {
-      cinemaList: []
+      cinemaList: [],
+      isLoading: true,
+      prevCityId: -1
     };
   },
-  mounted() {
-    this.axios.get("/api/cinemaList?cityId=10").then(result => {
+  activated() {
+    var cityId = this.$store.state.city.id;
+    if (this.prevCityId === cityId) return;
+    this.isLoading = true;
+    this.axios.get(`/api/cinemaList?cityId=${cityId}`).then(result => {
       if (result.data.msg === "ok") {
         this.cinemaList = result.data.data.cinemas;
+        this.isLoading = false;
+        this.prevCityId = cityId
       }
     });
   },
@@ -43,26 +58,26 @@ export default {
         { key: "sell", value: "折扣卡" },
         { key: "snack", value: "小吃" }
       ];
-      for(var i = 0 ;i<card.length;i++){
-        if(card[i].key === key){
-          return card[i].value
+      for (var i = 0; i < card.length; i++) {
+        if (card[i].key === key) {
+          return card[i].value;
         }
       }
-      return '';
+      return "";
     },
-    classCard(key){
+    classCard(key) {
       var card = [
         { key: "allowRefund", value: "bl" },
         { key: "endorse", value: "bl" },
         { key: "sell", value: "or" },
         { key: "snack", value: "or" }
       ];
-      for(var i = 0 ;i<card.length;i++){
-        if(card[i].key === key){
-          return card[i].value
+      for (var i = 0; i < card.length; i++) {
+        if (card[i].key === key) {
+          return card[i].value;
         }
       }
-      return '';
+      return "";
     }
   }
 };
