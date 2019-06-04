@@ -5,10 +5,10 @@
       <ul>
         <li v-for="coming in comingList" :key="coming.id">
           <div class="pic_show">
-            <img :src="coming.img | setWH('128.180')">
+            <img :src="coming.img | setWH('128.180')"  @tap="handleToDetail(coming.id)">
           </div>
           <div class="info_list">
-            <h2>
+            <h2 @tap="handleToDetail(coming.id)">
               {{coming.nm}}
               <img v-if="coming.version" src="@/assets/maxs.png">
             </h2>
@@ -46,6 +46,11 @@ export default {
         this.prevCityId = cityId;
       }
     });
+  },
+  methods:{
+    handleToDetail(movieId){
+      this.$router.push('/movie/detail/2/'+movieId)
+    }
   }
 };
 </script>
