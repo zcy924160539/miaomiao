@@ -6,10 +6,10 @@
         <li class="pullDown">{{pullDownMsg}}</li>
         <li v-for="movie in moveList" :key="movie.id">
           <div class="pic_show">
-            <img :src="movie.img | setWH('128.180')" @tap="handleToDetail">
+            <img :src="movie.img | setWH('128.180')" @tap="handleToDetail(movie.id)">
           </div>
           <div class="info_list">
-            <h2>
+            <h2 @tap="handleToDetail(movie.id)">
               {{movie.nm}}
               <img src="@/assets/maxs.png" v-if="movie.version">
             </h2>
@@ -53,8 +53,9 @@ export default {
     });
   },
   methods: {
-    handleToDetail() {
-      console.log("ok");
+    handleToDetail(movieId) {
+      // console.log(movieId)
+      this.$router.push('/movie/detail/1/'+movieId)
     },
     handleToScroll(pos) {
       if (pos.y > 30) {
